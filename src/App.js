@@ -1,14 +1,55 @@
 import React, { useEffect, useState } from "react"
 import web3 from "./web3"
 import lottery from "./lottery"
-import "./App.css"
 
 function App() {
   const [manager, setManager] = useState("")
   const [players, setPlayers] = useState([])
   const [balance, setBalance] = useState("")
   const [value, setValue] = useState("")
+  const [message, setMessage] = useState("")
 
+  useLottery(setManager, setPlayers, setBalance)
+
+  const onSubmit = async event => {
+    event.preventDefault()
+
+    const accounts = await web3.eth.getAccounts()
+
+    setMessage("Waiting on transaction success...")
+
+    await lottery.methods.enter().send({
+      from: accounts[0],
+      value: web3.utils.toWei(value, "ether")
+    })
+
+    setMessage("You have been entered!")
+  }
+
+  return (
+    <div>
+      <h2>Lottery Contract</h2>
+      <p>
+        This contract is managed by {manager}. There are currently{" "}
+        {players.length} people entered, competing to win{" "}
+        {web3.utils.fromWei(balance, "ether")} ether!
+      </p>
+      <hr />
+      <form onSubmit={onSubmit}>
+        <h4>Want to try your luck?</h4>
+        <div>
+          <label>Amount of ether to enter</label>
+          <input value={value} onChange={e => setValue(e.target.value)} />
+        </div>
+        <button>Enter</button>
+      </form>
+      <hr />
+      <h1>{message}</h1>
+    </div>
+  )
+}
+
+const useLottery = (setManager, setPlayers, setBalance) => {
   useEffect(() => {
     getContractData()
 
@@ -27,27 +68,8 @@ function App() {
     }
 
     return () => {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  return (
-    <div>
-      <h2>Lottery Contract</h2>
-      <p>
-        This contract is managed by {manager}. There are currently{" "}
-        {players.length} people entered, competing to win{" "}
-        {web3.utils.fromWei(balance, "ether")} ether!
-      </p>
-      <hr />
-      <form>
-        <h4>Want to try your luck?</h4>
-        <div>
-          <label>Amount of ether to enter</label>
-          <input value={value} onChange={e => setValue(e.target.value)} />
-        </div>
-        <button>Enter</button>
-      </form>
-    </div>
-  )
 }
 
 export default App
