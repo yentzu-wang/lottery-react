@@ -3,9 +3,6 @@ import logo from "./logo.svg"
 import "./App.css"
 
 function App() {
-  console.log(web3.version)
-  web3.eth.getAccounts().then(console.log)
-
   return (
     <div className="App">
       <header className="App-header">
