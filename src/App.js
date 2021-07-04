@@ -7,6 +7,7 @@ function App() {
   const [manager, setManager] = useState("")
   const [players, setPlayers] = useState([])
   const [balance, setBalance] = useState("")
+  const [value, setValue] = useState("")
 
   useEffect(() => {
     getContractData()
@@ -36,6 +37,15 @@ function App() {
         {players.length} people entered, competing to win{" "}
         {web3.utils.fromWei(balance, "ether")} ether!
       </p>
+      <hr />
+      <form>
+        <h4>Want to try your luck?</h4>
+        <div>
+          <label>Amount of ether to enter</label>
+          <input value={value} onChange={e => setValue(e.target.value)} />
+        </div>
+        <button>Enter</button>
+      </form>
     </div>
   )
 }
